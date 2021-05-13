@@ -6,11 +6,12 @@ import MealItem from "./MealItem/MealItem";
 
 import { FOOD_APP_URL } from "../../../constants/constants";
 import useHttp from "../../../hooks/use-http";
+import Spinner from "../../UI/Spinner/Spinner";
 
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
 
-  const { isLoading, error, sendRequest: fetchMeals } = useHttp();
+  const { isLoading, error: httpError, sendRequest: fetchMeals } = useHttp();
 
   useEffect(() => {
     const transformData = (mealsData) => {
@@ -27,8 +28,25 @@ const AvailableMeals = () => {
 
       setMeals(loadedMeals);
     };
-    fetchMeals({ url: FOOD_APP_URL + 'meals.json' }, transformData);
+    fetchMeals({ url: FOOD_APP_URL + "meals.json" }, transformData);
   }, [fetchMeals]);
+
+  if (isLoading) {
+    return (
+      <section className={classes.MealsLoading}>
+        <Spinner />
+        <p>Loading...</p>
+      </section>
+    );
+  }
+
+  if (httpError) {
+    return (
+      <section className={classes.MealsError}>
+        <p>{httpError}</p>
+      </section>
+    );
+  }
 
   const mealsList = meals.map((meal) => {
     return (
@@ -46,6 +64,7 @@ const AvailableMeals = () => {
     <section className={classes.meals}>
       <Card>
         <ul>{mealsList}</ul>
+        {/* {error ? error : ''} */}
       </Card>
     </section>
   );
