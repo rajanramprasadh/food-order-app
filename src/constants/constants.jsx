@@ -1,0 +1,1 @@
+export const FOOD_APP_URL = 'https://react-http-ram-default-rtdb.firebaseio.com/';
