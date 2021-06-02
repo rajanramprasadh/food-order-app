@@ -2,10 +2,14 @@ import { useContext } from "react";
 
 import Modal from "../UI/Modal/Modal";
 import CartItem from "./CartItem/CartItem";
-import classes from "./Cart.module.css";
-import CartContext from "../../store/cart-context";
+import Checkout from "./Checkout/Checkout";
 
-const Cart = (props) => {
+import classes from "./Cart.module.css";
+
+import CartContext from "../../store/cart-context";
+import CheckoutProvider from "../../store/CheckoutProvider";
+
+const Cart = () => {
   const cartCtx = useContext(CartContext);
 
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
@@ -35,21 +39,36 @@ const Cart = (props) => {
       })}
     </ul>
   );
-  return (
-    <Modal onClose={props.onClose}>
-      {cartItems}
-      <div className={classes.total}>
-        <span>Total Amount</span>
-        <span>{totalAmount}</span>
-      </div>
-      <div className={classes.actions}>
-        <button className={classes["button--alt"]} onClick={props.onClose}>
-          Close
+
+  const modalActions = (
+    <div className={classes.actions}>
+      <button className={classes["button--alt"]} onClick={cartCtx.hideCart}>
+        Close
+      </button>
+      {hasItems && (
+        <button className={classes.button} onClick={cartCtx.orderFood}>
+          Order
         </button>
-        {hasItems && <button className={classes.button}>Order</button>}
-      </div>
-    </Modal>
+      )}
+    </div>
   );
+
+  let modal = "";
+  if (cartCtx.isCartShown) {
+    modal = (
+      <Modal>
+        {cartItems}
+        <div className={classes.total}>
+          <span>Total Amount</span>
+          <span>{totalAmount}</span>
+        </div>
+        {cartCtx.isCheckout && <Checkout />}
+        {!cartCtx.isCheckout && modalActions}
+      </Modal>
+    );
+  }
+
+  return <CheckoutProvider>{modal}</CheckoutProvider>;
 };
 
 export default Cart;

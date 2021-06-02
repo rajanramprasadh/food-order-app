@@ -29,6 +29,7 @@ const cartReducer = (state, action) => {
     }
 
     return {
+      ...state,
       items: updatedItems,
       totalAmount: updatedTotalAmount,
     };
@@ -41,15 +42,35 @@ const cartReducer = (state, action) => {
     const updatedTotalAmount = state.totalAmount - existingItem.price;
     let updatedItems;
     if (existingItem.amount === 1) {
-        updatedItems = state.items.filter(item => item.id !== action.id);
+      updatedItems = state.items.filter((item) => item.id !== action.id);
     } else {
-        const updatedItem = {...existingItem, amount: existingItem.amount - 1};
-        updatedItems = [...state.items];
-        updatedItems[existingCartItemIndex] = updatedItem;
+      const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
+      updatedItems = [...state.items];
+      updatedItems[existingCartItemIndex] = updatedItem;
     }
     return {
-        items: updatedItems,
-        totalAmount: updatedTotalAmount
+      ...state,
+      items: updatedItems,
+      totalAmount: updatedTotalAmount,
+    };
+  }
+  if (action.type === "HIDE_CART") {
+    return {
+      ...state,
+      isCartShown: false,
+      isCheckout: false
+    };
+  }
+  if (action.type === "SHOW_CART") {
+    return {
+      ...state,
+      isCartShown: true,
+    };
+  }
+  if (action.type === "ORDER_FOOD") {
+    return {
+      ...state,
+      isCheckout: true,
     };
   }
   return defaultCartState;
@@ -69,11 +90,28 @@ const CartProvider = (props) => {
     dispatchCartAction({ type: "REMOVE", id: id });
   };
 
+  const hideCartHandler = () => {
+    dispatchCartAction({ type: "HIDE_CART" });
+  };
+
+  const showCartHandler = () => {
+    dispatchCartAction({ type: "SHOW_CART" });
+  };
+
+  const orderHandler = () => {
+    dispatchCartAction({ type: "ORDER_FOOD" });
+  };
+
   const cartContext = {
     items: cartState.items,
     totalAmount: cartState.totalAmount,
+    isCartShown: cartState.isCartShown,
+    isCheckout: cartState.isCheckout,
     addItem: addItemToCartHandler,
     removeItem: removeItemFromCartHandler,
+    hideCart: hideCartHandler,
+    showCart: showCartHandler,
+    orderFood: orderHandler,
   };
   return (
     <CartContext.Provider value={cartContext}>
