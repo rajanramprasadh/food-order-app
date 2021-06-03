@@ -7,7 +7,7 @@ import Checkout from "./Checkout/Checkout";
 import classes from "./Cart.module.css";
 
 import CartContext from "../../store/cart-context";
-import CheckoutProvider from "../../store/CheckoutProvider";
+// import CheckoutProvider from "../../store/CheckoutProvider";
 
 const Cart = () => {
   const cartCtx = useContext(CartContext);
@@ -68,7 +68,8 @@ const Cart = () => {
     );
   }
 
-  return <CheckoutProvider>{modal}</CheckoutProvider>;
+  // return <CheckoutProvider>{modal}</CheckoutProvider>;
+  return modal;
 };
 
 export default Cart;
